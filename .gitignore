@@ -1,0 +1,4 @@
+# Ignore appsettings with secrets
+appsettings.json
+appsettings.Development.json
+/EgnyteApp.sln
