@@ -2,7 +2,7 @@
 
 A .NET 8 Razor Pages application for managing Egnyte file system permissions and folder access.
 
-## Product Requirements Document (PRD)
+## Product Requirements Document
 
 ### Purpose
 Enable efficient management of Egnyte folder permissions through a user-friendly web interface, focusing on group-based access control and bulk operations.
@@ -12,24 +12,6 @@ Enable efficient management of Egnyte folder permissions through a user-friendly
 - Project Managers
 - IT Support Staff
 - Permission Administrators
-
-### User Stories
-
-1. **Authentication**
-   - As a user, I want to log in using my Egnyte credentials
-   - As a user, I want my session to remain active while I work
-   - As an admin, I want secure OAuth 2.0 based authentication
-
-2. **Folder Management**
-   - As a user, I want to browse the folder structure
-   - As a user, I want to see folder contents and metadata
-   - As a user, I want breadcrumb navigation for easy traversal
-
-3. **Permission Management**
-   - As an admin, I want to view current folder permissions
-   - As an admin, I want to modify group permissions for folders
-   - As an admin, I want to perform bulk permission updates
-   - As a user, I want to see permission inheritance information
 
 ### Technical Requirements
 

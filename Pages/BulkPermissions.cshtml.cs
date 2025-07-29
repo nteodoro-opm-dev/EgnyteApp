@@ -264,4 +264,88 @@ public partial class BulkPermissionsModel : PageModel
 
         return await OnGetAsync(FolderPath);
     }
+
+    public async Task<IActionResult> OnPostUpdatePermissionAsync([FromBody] UpdatePermissionRequest request)
+    {
+        if (!User.Identity?.IsAuthenticated ?? true)
+            return Unauthorized();
+
+        var accessToken = User.Claims.FirstOrDefault(c => c.Type == "access_token")?.Value;
+        if (string.IsNullOrWhiteSpace(accessToken))
+            return new JsonResult(new { error = "No access token found. Please login again." }) { StatusCode = 401 };
+
+        if (string.IsNullOrWhiteSpace(request.GroupName))
+            return BadRequest(new { error = "Group name is required." });
+
+        if (string.IsNullOrWhiteSpace(request.Permission))
+            return BadRequest(new { error = "Permission is required." });
+
+        var debugInfo = new ApiDebugInfo
+        {
+            Operation = "Set Folder Permission",
+            Endpoint = $"https://{_folderService.GetDomain()}/pubapi/v2/perms/{request.FolderPath.TrimStart('/').Replace("!", "%21")}",
+            Request = JsonSerializer.Serialize(
+                new { groupPerms = new Dictionary<string, string> { { request.GroupName, request.Permission } } },
+                new JsonSerializerOptions { WriteIndented = true }
+            ),
+            Timestamp = DateTime.UtcNow,
+            FolderPath = request.FolderPath
+        };
+
+        try
+        {
+            await _folderService.SetFolderPermissionsAsync(accessToken, request.FolderPath, request.GroupName, request.Permission);
+            debugInfo.IsSuccess = true;
+            debugInfo.Response = "Success (No content returned)";
+            DebugInfo.Add(debugInfo);
+
+            return new JsonResult(new { 
+                success = true,
+                debugHtml = RenderDebugInfo(debugInfo)
+            });
+        }
+        catch (Exception ex)
+        {
+            debugInfo.IsSuccess = false;
+            debugInfo.ErrorMessage = ex.Message;
+            DebugInfo.Add(debugInfo);
+            _logger.LogError(ex, "Error setting permissions for folder: {Folder}", request.FolderPath);
+            
+            return new JsonResult(new { 
+                success = false, 
+                error = ex.Message,
+                debugHtml = RenderDebugInfo(debugInfo)
+            });
+        }
+    }
+
+    private string RenderDebugInfo(ApiDebugInfo debug)
+    {
+        return $@"
+        <div class=""card mb-3 {(debug.IsSuccess ? "border-success" : "border-danger")}"">
+            <div class=""card-header bg-transparent {(debug.IsSuccess ? "border-success" : "border-danger")}"">
+                <div class=""d-flex justify-content-between align-items-center"">
+                    <strong>{debug.Operation}</strong>
+                    <span class=""text-muted"">{debug.Timestamp:yyyy-MM-dd HH:mm:ss}</span>
+                </div>
+            </div>
+            <div class=""card-body"">
+                <h6 class=""card-subtitle mb-2"">Endpoint</h6>
+                <pre class=""bg-light p-2 rounded""><code>{debug.Endpoint}</code></pre>
+
+                <h6 class=""card-subtitle mb-2 mt-3"">Request</h6>
+                <pre class=""bg-light p-2 rounded""><code>{debug.Request}</code></pre>
+
+                <h6 class=""card-subtitle mb-2 mt-3"">Response</h6>
+                <pre class=""bg-light p-2 rounded""><code>{(debug.IsSuccess ? debug.Response : debug.ErrorMessage)}</code></pre>
+            </div>
+        </div>";
+    }
+
+    public class UpdatePermissionRequest
+    {
+        public string FolderPath { get; set; } = string.Empty;
+        public string GroupName { get; set; } = string.Empty;
+        public string Permission { get; set; } = string.Empty;
+    }
 }
