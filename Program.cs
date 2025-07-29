@@ -3,6 +3,14 @@ using EgnyteApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add configuration sources
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables("EGNYTE_") // This allows overriding settings with environment variables
+    .AddUserSecrets<Program>(optional: true); // For development secrets
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient<EgnyteAuthService>();

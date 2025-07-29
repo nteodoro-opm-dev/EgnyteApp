@@ -294,3 +294,15 @@ body {
         width: auto;
     }
 }
+
+/* Folder link styling */
+.folder-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.folder-link:hover {
+    text-decoration: none;
+    color: inherit;
+    opacity: 0.8;
+}

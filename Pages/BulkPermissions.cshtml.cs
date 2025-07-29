@@ -36,7 +36,6 @@ public partial class BulkPermissionsModel : PageModel
     {
         "",
         "None",
-        "Viewer Only",
         "Viewer",
         "Editor",
         "Full",
