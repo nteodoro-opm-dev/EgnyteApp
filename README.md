@@ -1,4 +1,4 @@
-# EgnyteApp
+# OPM Egnyte App
 
 A .NET 8 Razor Pages application for authenticating with Egnyte and browsing files/folders using the Egnyte API.
 
@@ -11,38 +11,6 @@ A .NET 8 Razor Pages application for authenticating with Egnyte and browsing fil
 - **File/folder icons** (folder, file, zip, etc.)
 - **AJAX-powered subfolder expansion**
 - **Folder Permission Management**
-
-## Standard Folder Structure and Permissions
-
-| Folder Path | Permission Level |
-|-------------|-----------------|
-| 1 Master List | No Access |
-| 2 Permits, Contract Documents, Letters | ------- |
-| ?? \Permits, Contract Documents, Letters\Permits | View |
-| ?? \Permits, Contract Documents, Letters\Contract | No Access |
-| ?? \Permits, Contract Documents, Letters\Letters | No Access |
-| 3 OCIP | No Access |
-| 4 Drawings, Specs | View |
-| 5 Suppliers Quotes & P.Os | Full |
-| ?? \Suppliers Quotes & P.Os\Packing Slips | View |
-| 6 Fixtures | View |
-| 7 Equipment | View |
-| 8 Project Schedules | View |
-| 9 Progress | No Access |
-| 10 Change Orders | View |
-| 11 Reports | View |
-| 12 RFIs, ASIs | View |
-| 13 Meeting Minutes | Editor |
-| 14 Transmittals - Job Information Sheets | No Access |
-| 15 Submittals - Shop Drawings | -------- |
-| ?? \Shop Drawings\Shop Drawings (Received from Vendor) | No Access |
-| ?? \Shop Drawings\Shop Drawings (Reviewed) | View |
-| ?? \Shop Drawings\Shop Drawings (Submitted) | No Access |
-| 16 O+M Manuals | View |
-| 17 Controls | Editor |
-| 18 QA-QC | Full |
-| 19 Safety Manual | View |
-| 20 Code Book | View |
 
 ## Prerequisites
 
@@ -181,42 +149,3 @@ The core functionality of this application can be broken down into these essenti
    - HTTPS
    - Token management
    - Input validation
-
-## AI Prompt Template
-
-To recreate this project, you can use the following prompt template:
-
-```
-I want to create a .NET 8 Razor Pages web application that integrates with the Egnyte API. The application should:
-
-1. Implement OAuth 2.0 authentication with Egnyte using Resource Owner Password flow
-2. Allow users to:
-   - Browse folders and files
-   - View and set folder permissions for groups
-   - Navigate through folder hierarchy with breadcrumb navigation
-3. Include proper error handling and security measures
-4. Use Bootstrap for UI and Bootstrap Icons for file/folder icons
-
-Technical requirements:
-- .NET 8 Razor Pages
-- Clean architecture with separate services for auth and folder operations
-- Secure configuration management
-- Proper input validation and error handling
-- Session management for auth tokens
-
-Please help me implement this step by step, starting with:
-1. Project structure and core services
-2. Authentication implementation
-3. Folder browsing functionality
-4. Permission management
-5. UI components and navigation
-
-Include security best practices and proper error handling throughout the implementation.
-```
-
-Use this prompt with an AI model that can help with code generation, and follow the implementation steps to recreate this project. Make sure to:
-1. Never commit real credentials
-2. Use proper security practices
-3. Test thoroughly
-4. Implement error handling
-5. Follow the MVP approach before adding advanced features
