@@ -13,6 +13,7 @@ obj/
 *.user
 *.userosscache
 *.sln.docstates
+appsettings.json
 
 # Secrets
 appsettings.Development.json
