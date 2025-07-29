@@ -1,0 +1,213 @@
+@page
+@model EgnyteApp.Pages.SetFolderPermissionModel
+@{
+    ViewData["Title"] = "Set Folder Permission";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-folder me-2"></i>
+                    Set Folder Permission
+                </h5>
+            </div>
+            <div class="card-body">
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Page("./SetFolderPermission", new { path = "/" })">Root</a>
+                        </li>
+                        @{
+                            var segments = Model.FolderPath?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                            var pathSoFar = "";
+                            for (int i = 0; i < segments.Length; i++)
+                            {
+                                pathSoFar += "/" + segments[i];
+                                if (i == segments.Length - 1)
+                                {
+                                    <li class="breadcrumb-item active" aria-current="page">@segments[i]</li>
+                                }
+                                else
+                                {
+                                    <li class="breadcrumb-item">
+                                        <a href="@Url.Page("./SetFolderPermission", new { path = pathSoFar })">@segments[i]</a>
+                                    </li>
+                                }
+                            }
+                        }
+                    </ol>
+                </nav>
+
+                @if (Model.Error != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        @Model.Error
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (Model.Success)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Permissions set successfully
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form method="post">
+                    <input type="hidden" asp-for="FolderPath" />
+
+                    <div class="mb-3">
+                        <label asp-for="GroupName" class="form-label">Group Name</label>
+                        <input asp-for="GroupName" class="form-control" required placeholder="Enter group name" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Permission" class="form-label">Permission</label>
+                        <select asp-for="Permission" class="form-select" required>
+                            <option value="">Select Permission</option>
+                            @foreach (var perm in Model.PermissionValues)
+                            {
+                                <option value="@perm">@perm</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-circle me-2"></i>
+                        Set Permission
+                    </button>
+                </form>
+
+                @if (Model.CurrentFolderContent?.folders != null)
+                {
+                    <hr />
+                    <h6>Subfolders:</h6>
+                    <div class="list-group">
+                        @foreach (var folder in Model.CurrentFolderContent.folders)
+                        {
+                            <a href="@Url.Page("./SetFolderPermission", new { path = folder.path })" 
+                               class="list-group-item list-group-item-action">
+                                <i class="bi bi-folder text-warning me-2"></i>
+                                @folder.name
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        @if (!string.IsNullOrEmpty(Model.ApiRequest))
+        {
+            <div class="d-grid gap-2 mb-3">
+                <button class="btn btn-outline-secondary" type="button" 
+                        data-bs-toggle="collapse" data-bs-target="#apiDetailsPanel" 
+                        aria-expanded="false" aria-controls="apiDetailsPanel">
+                    <i class="bi bi-code-square me-2"></i>
+                    <span>Show API Details</span>
+                    <i class="bi bi-chevron-down ms-2 toggle-icon"></i>
+                </button>
+            </div>
+
+            <div class="collapse" id="apiDetailsPanel">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-arrow-right-circle me-2"></i>
+                            API Request
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Endpoint:</h6>
+                            <div class="d-flex align-items-center">
+                                <code class="user-select-all flex-grow-1">POST @Model.ApiUrl</code>
+                                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('@Model.ApiUrl')" title="Copy URL">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6>Headers:</h6>
+                            <pre class="bg-dark text-light p-2 rounded"><code>Content-Type: application/json
+Authorization: Bearer {your-access-token}</code></pre>
+                        </div>
+
+                        <div>
+                            <h6>Request Body:</h6>
+                            <div class="position-relative">
+                                <pre class="bg-dark text-light p-3 rounded user-select-all"><code>@Model.ApiRequest</code></pre>
+                                <button class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2" 
+                                        onclick="copyToClipboard(@Html.Raw(Json.Serialize(Model.ApiRequest)))"
+                                        title="Copy JSON">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-arrow-left-circle me-2"></i>
+                            API Response
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="position-relative">
+                            <pre class="bg-dark text-light p-3 rounded user-select-all"><code>@Model.ApiResponse</code></pre>
+                            <button class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 m-2" 
+                                    onclick="copyToClipboard(@Html.Raw(Json.Serialize(Model.ApiResponse)))"
+                                    title="Copy JSON">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // You could show a tooltip or alert here
+                console.log('Text copied to clipboard');
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle icon rotation
+            document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(btn) {
+                const toggleIcon = btn.querySelector('.toggle-icon');
+                if (toggleIcon) {
+                    btn.addEventListener('click', function() {
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        if (this.querySelector('span')) {
+                            this.querySelector('span').textContent = isExpanded ? 'Hide API Details' : 'Show API Details';
+                        }
+                        toggleIcon.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0)';
+                    });
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .toggle-icon {
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+}

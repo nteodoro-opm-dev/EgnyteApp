@@ -1,4 +1,29 @@
-# Ignore appsettings with secrets
-appsettings.json
+# .NET Core build folders
+bin/
+obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Secrets
 appsettings.Development.json
-/EgnyteApp.sln
+appsettings.Production.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Operating System Files
+.DS_Store
+Thumbs.db

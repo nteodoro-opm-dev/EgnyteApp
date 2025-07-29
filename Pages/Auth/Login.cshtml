@@ -1,0 +1,15 @@
+@page
+@model EgnyteApp.Pages.Auth.LoginModel
+
+<div class="container">
+    <h2>Login with Egnyte</h2>
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="Domain">Egnyte Domain</label>
+            <input asp-for="Domain" class="form-control" placeholder="yourdomain" />
+            <small class="form-text text-muted">Enter your Egnyte domain name (e.g., if your Egnyte URL is 'company.egnyte.com', enter 'company')</small>
+            <span asp-validation-for="Domain" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Login with Egnyte</button>
+    </form>
+</div>

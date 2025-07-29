@@ -1,0 +1,157 @@
+@page 
+@model EgnyteApp.Pages.ListFolderModel
+@{
+    ViewData["Title"] = "List Folder";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <h1>List Folder Contents</h1>
+
+            @if (Model.Error != null)
+            {
+                <div class="alert alert-danger">@Model.Error</div>
+            }
+
+            @if (Model.FolderContent != null)
+            {
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        @{
+                            var segments = Model.FolderPath?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                            var pathSoFar = "";
+                            <li class="breadcrumb-item">
+                                <a href="@Url.Page("./ListFolder", new { path = "/" })">Root</a>
+                            </li>
+                            for (int i = 0; i < segments.Length; i++)
+                            {
+                                pathSoFar += "/" + segments[i];
+                                if (i == segments.Length - 1)
+                                {
+                                    <li class="breadcrumb-item active" aria-current="page">@segments[i]</li>
+                                }
+                                else
+                                {
+                                    <li class="breadcrumb-item">
+                                        <a href="@Url.Page("./ListFolder", new { path = pathSoFar })">@segments[i]</a>
+                                    </li>
+                                }
+                            }
+                        }
+                    </ol>
+                </nav>
+                <h2>Contents of @Model.FolderPath</h2>
+                
+                <div class="list-group">
+                @if (Model.FolderContent.folders != null)
+                {
+                    foreach (var folder in Model.FolderContent.folders)
+                    {
+                        <a href="@Url.Page("./ListFolder", new { path = folder.path, selectedFolder = folder.path })" 
+                           class="list-group-item list-group-item-action folder-item @(Model.SelectedFolderPath == folder.path ? "active" : "")" 
+                           data-folder-path="@folder.path">
+                            <i class="bi bi-folder text-warning"></i>
+                            @folder.name
+                        </a>
+                    }
+                }
+
+                @if (Model.FolderContent.files != null)
+                {
+                    foreach (var file in Model.FolderContent.files)
+                    {
+                        <div class="list-group-item">
+                            @{
+                                var icon = "bi-file-earmark";
+                                if (file.name?.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ?? false)
+                                {
+                                    icon = "bi-file-earmark-zip";
+                                }
+                            }
+                            <i class="bi @icon"></i>
+                            @file.name
+                            <small class="text-muted">(@FormatSize(file.size ?? 0))</small>
+                        </div>
+                    }
+                }
+                </div>
+            }
+        </div>
+        <div class="col-md-4">
+            <div id="permissionsPanel" class="card @(Model.SelectedFolderPath != null ? "" : "d-none")">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">Folder Permissions</h3>
+                </div>
+                <div class="card-body">
+                    <div id="folderName" class="mb-3 fw-bold">@Model.SelectedFolderPath</div>
+                    <div id="inheritsPermissions" class="mb-3">
+                        <strong>Inherits Permissions:</strong> <span>@(Model.InheritsPermissions == true ? "Yes" : Model.InheritsPermissions == false ? "No" : "")</span>
+                    </div>
+                    <div id="userPermissions">
+                        <h4>User Permissions</h4>
+                        <ul class="list-unstyled">
+                        @if (Model.UserPermissions != null && Model.UserPermissions.Count > 0)
+                        {
+                            foreach (var user in Model.UserPermissions)
+                            {
+                                <li><strong>@user.Key:</strong> @user.Value</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No user permissions found.</li>
+                        }
+                        </ul>
+                    </div>
+                    <div id="groupPermissions">
+                        <h4>Group Permissions</h4>
+                        <ul class="list-unstyled">
+                        @if (Model.GroupPermissions != null && Model.GroupPermissions.Count > 0)
+                        {
+                            foreach (var group in Model.GroupPermissions)
+                            {
+                                <li><strong>@group.Key:</strong> @group.Value</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No group permissions found.</li>
+                        }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const folderLinks = document.querySelectorAll('.folder-item');
+            folderLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    // No AJAX, just let the navigation happen
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string FormatSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        int order = 0;
+        double size = bytes;
+        
+        while (size >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            size /= 1024;
+        }
+
+        return $"{size:0.##} {sizes[order]}";
+    }
+}

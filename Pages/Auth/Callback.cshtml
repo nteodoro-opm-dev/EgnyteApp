@@ -1,0 +1,17 @@
+@page
+@model EgnyteApp.Pages.Auth.CallbackModel
+
+<div class="container">
+    @if (Model.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.Error
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            Successfully authenticated! Redirecting...
+        </div>
+    }
+</div>

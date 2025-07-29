@@ -1,0 +1,124 @@
+@page
+@model EgnyteApp.Pages.GetUserPermissionsModel
+@{
+    ViewData["Title"] = "Get User Effective Permissions";
+}
+
+<div class="container">
+    <h1>Get User Effective Permissions</h1>
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="@Url.Page("./GetUserPermissions", new { folderPath = "/" })">Root</a>
+            </li>
+            @{
+                var segments = Model.FolderPath?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
+                var pathSoFar = "";
+                for (int i = 0; i < segments.Length; i++)
+                {
+                    pathSoFar += "/" + segments[i];
+                    if (i == segments.Length - 1)
+                    {
+                        <li class="breadcrumb-item active" aria-current="page">@segments[i]</li>
+                    }
+                    else
+                    {
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Page("./GetUserPermissions", new { folderPath = pathSoFar })">@segments[i]</a>
+                        </li>
+                    }
+                }
+            }
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Select Folder</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.CurrentFolderContent?.folders != null)
+                    {
+                        <div class="list-group">
+                            @foreach (var folder in Model.CurrentFolderContent.folders)
+                            {
+                                <a href="@Url.Page("./GetUserPermissions", new { folderPath = folder.path })" 
+                                class="list-group-item list-group-item-action">
+                                    <i class="bi bi-folder text-warning"></i>
+                                    @folder.name
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Check User Permissions</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="FolderPath" />
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label">Username (leave empty for current user)</label>
+                            <input asp-for="Username" class="form-control" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Get Permissions</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @if (Model.Error != null)
+            {
+                <div class="alert alert-danger">@Model.Error</div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Permission))
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Permission Level</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>User:</strong> @(string.IsNullOrEmpty(Model.Username) ? "Current User" : Model.Username)</p>
+                        <p><strong>Folder:</strong> @Model.FolderPath</p>
+                        <p><strong>Permission:</strong> @Model.Permission</p>
+
+                        <div class="mt-3">
+                            <h6>Allowed Actions:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi @(Model.Permission != "None" ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Preview Files in WebUI</li>
+                                <li><i class="bi @(IsAllowed("Viewer") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Download/Read Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Editor") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Copy Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Editor") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Upload/Edit Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Editor") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Create Sub-folder</li>
+                                <li><i class="bi @(IsAllowed("Editor") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Rename Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Editor") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Create Upload Links</li>
+                                <li><i class="bi @(IsAllowed("Full") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Move Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Full") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Delete Files, Folders</li>
+                                <li><i class="bi @(IsAllowed("Owner") ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger")"></i> Edit Folder Sharing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    private bool IsAllowed(string requiredLevel)
+    {
+        var levels = new[] { "None", "Viewer Only", "Viewer", "Editor", "Full", "Owner" };
+        var requiredIndex = Array.IndexOf(levels, requiredLevel);
+        var currentIndex = Array.IndexOf(levels, Model.Permission);
+        
+        return currentIndex >= requiredIndex && currentIndex > 0;
+    }
+}
