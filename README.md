@@ -1,151 +1,283 @@
 # OPM Egnyte App
 
-A .NET 8 Razor Pages application for authenticating with Egnyte and browsing files/folders using the Egnyte API.
+A .NET 8 Razor Pages application for managing Egnyte file system permissions and folder access.
 
-## Features
+## Product Requirements Document (PRD)
 
-- **Egnyte OAuth 2.0 Authentication** (Authorization Code and Resource Owner Password flows)
-- **Secure login** with Egnyte credentials
-- **Browse files and folders** with a tree-style, expandable UI
-- **File size formatting** (B, KB, MB, GB, TB)
-- **File/folder icons** (folder, file, zip, etc.)
-- **AJAX-powered subfolder expansion**
-- **Folder Permission Management**
+### Purpose
+Enable efficient management of Egnyte folder permissions through a user-friendly web interface, focusing on group-based access control and bulk operations.
+
+### Target Users
+- System Administrators
+- Project Managers
+- IT Support Staff
+- Permission Administrators
+
+### User Stories
+
+1. **Authentication**
+   - As a user, I want to log in using my Egnyte credentials
+   - As a user, I want my session to remain active while I work
+   - As an admin, I want secure OAuth 2.0 based authentication
+
+2. **Folder Management**
+   - As a user, I want to browse the folder structure
+   - As a user, I want to see folder contents and metadata
+   - As a user, I want breadcrumb navigation for easy traversal
+
+3. **Permission Management**
+   - As an admin, I want to view current folder permissions
+   - As an admin, I want to modify group permissions for folders
+   - As an admin, I want to perform bulk permission updates
+   - As a user, I want to see permission inheritance information
+
+### Technical Requirements
+
+1. **Security**
+   - OAuth 2.0 authentication with Egnyte
+   - Secure storage of credentials and tokens
+   - HTTPS encryption
+   - CSRF protection
+
+2. **Performance**
+   - Fast folder navigation
+   - Efficient bulk operations
+   - Responsive UI
+
+3. **Reliability**
+   - Error handling and recovery
+   - Validation of permissions
+   - Atomic operations
+
+## Minimum Viable Product (MVP)
+
+### Phase 1: Core Authentication - ? Completed
+1. **User Authentication**
+   - [x] OAuth 2.0 integration
+   - [x] Login page
+   - [x] Session management
+   - [x] Token handling
+
+2. **Security Foundation**
+   - [x] HTTPS enforcement
+   - [x] Secure token storage
+   - [x] User secrets management
+
+### Phase 2: Basic File System - ? Completed
+1. **Folder Navigation**
+   - [x] List folders and files
+   - [x] Folder metadata display
+   - [x] Breadcrumb navigation
+   - [x] Path validation
+
+2. **UI Components**
+   - [x] Folder tree view
+   - [x] File/folder icons
+   - [x] Dark/light theme support
+
+### Phase 3: Permission Management - ? Completed
+1. **View Permissions**
+   - [x] Display current permissions
+   - [x] Show inheritance status
+   - [x] Group permission display
+   - [x] Permission level indicators
+
+2. **Modify Permissions**
+   - [x] Set group permissions
+   - [x] Validate permission changes
+   - [x] Error handling
+   - [x] Success confirmation
+
+### Phase 4: Bulk Operations - ? Completed
+1. **Bulk Updates**
+   - [x] Select multiple folders
+   - [x] Batch permission changes
+   - [x] Progress tracking
+   - [x] Error reporting
+
+2. **Operation Management**
+   - [x] Validation checks
+   - [x] Transaction handling
+   - [x] Status updates
+   - [x] Rollback support
+
+### Future Phases
+
+#### Phase 5: Advanced Operations
+1. **File Management**
+   - [ ] Upload/Download
+   - [ ] Move/Copy
+   - [ ] Delete operations
+   - [ ] File versioning
+
+2. **Permission Templates**
+   - [ ] Create templates
+   - [ ] Apply to multiple folders
+   - [ ] Template management
+   - [ ] Default templates
+
+#### Phase 6: Monitoring & Reporting
+1. **Audit System**
+   - [ ] Permission change logs
+   - [ ] User activity tracking
+   - [ ] Report generation
+   - [ ] Export capabilities
+
+2. **Analytics**
+   - [ ] Usage statistics
+   - [ ] Permission analytics
+   - [ ] Performance metrics
+   - [ ] Health monitoring
+
+## Key Features
+
+- **Authentication**
+  - Secure OAuth 2.0 integration with Egnyte
+  - Multiple authentication flows (Resource Owner Password & Authorization Code)
+  - Session management and token handling
+
+- **File System Management**
+  - Browse files and folders with a modern UI
+  - Tree-style folder navigation with breadcrumbs
+  - File metadata display (size, type, etc.)
+  - AJAX-powered dynamic folder loading
+
+- **Permission Management**
+  - Individual and bulk permission updates
+  - Group-based access control
+  - Permission inheritance visualization
+  - Granular permission levels (None to Owner)
+
+- **Security & Integration**
+  - Secure credential storage using ASP.NET Core User Secrets
+  - HTTPS enforcement
+  - Comprehensive error handling
+  - Production-ready configuration options
 
 ## Prerequisites
 
 - .NET 8 SDK
-- Egnyte API credentials (Client ID, Client Secret, etc.)
+- Egnyte API credentials
+- HTTPS certificate (development or production)
 
-## Setup
+## Quick Start
 
-1. Clone the repository.
-2. Update `appsettings.json` with your Egnyte API credentials and endpoints.
-3. Run the project:
+1. Clone the repository
+2. Configure secrets:
+   ```sh
+   dotnet user-secrets set "Egnyte:ClientId" "<your-client-id>"
+   dotnet user-secrets set "Egnyte:ClientSecret" "<your-client-secret>"
+   ```
+3. Update `appsettings.json` with your Egnyte domain and endpoints
+4. Run the application:
    ```sh
    dotnet run
    ```
-4. Open the app in your browser (e.g., https://localhost:5001).
 
-## Secret Management
+## Configuration
 
-**Never commit real secrets to version control.**
+### Development
+Use ASP.NET Core User Secrets for local development:
+```sh
+dotnet user-secrets init
+dotnet user-secrets set "Egnyte:ClientId" "<your-client-id>"
+dotnet user-secrets set "Egnyte:ClientSecret" "<your-client-secret>"
+```
 
-- `appsettings.json` contains placeholders for `ClientId` and `ClientSecret`.
-- The file is listed in `.gitignore` to prevent accidental commits.
-- For local development, use [ASP.NET Core User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets):
-  ```sh
-  dotnet user-secrets set "Egnyte:ClientId" "<your-client-id>"
-  dotnet user-secrets set "Egnyte:ClientSecret" "<your-client-secret>"
-  ```
-- In production, set secrets as environment variables:
-  - `Egnyte__ClientId`
-  - `Egnyte__ClientSecret`
+### Production
+Set environment variables:
+- `Egnyte__ClientId`
+- `Egnyte__ClientSecret`
+- `Egnyte__Domain`
 
-## Project Structure
+## Architecture
 
-The application is organized into the following components:
+### Core Components
 
-### Authentication (Auth folder)
-- `EgnyteAuthService`: Handles OAuth 2.0 authentication flows
-- `EgnyteAuthOptions`: Configuration for authentication endpoints
+1. **Authentication (Auth/)**
+   - EgnyteAuthService: OAuth flow management
+   - EgnyteAuthOptions: Auth configuration
+   - Login/Callback handlers
 
-### Folder Management (Services folder)
-- `EgnyteFolderService`: Handles folder operations (listing, permissions)
+2. **File System (Services/)**
+   - EgnyteFolderService: File/folder operations
+   - Permission management
+   - API integration
 
-### Models (Models folder)
-- Response types for API interactions
-- Data transfer objects
+3. **User Interface (Pages/)**
+   - Folder browsing
+   - Permission management
+   - Bulk operations
+   - Error handling
 
-### Pages
-- Authentication pages (login, logout)
-- Folder management pages (list, permissions)
-
-## Features
-
-### Authentication
-
-- **Resource Owner Password Flow:**
-  - Direct login with Egnyte credentials
-  - Secure token management
-- **Authorization Code Flow:**
-  - OAuth 2.0 standard flow (optional)
-
-### Folder Operations
-
-- Browse folders and files
-- View and set permissions
-- Support for special characters (including !)
-- Error handling and validation
+4. **Models (Models/)**
+   - API response types
+   - Permission models
+   - File system DTOs
 
 ## Security Features
 
-- Secure token handling
+- OAuth 2.0 compliant authentication
+- Secure secret management
+- HTTPS requirement
 - Input validation
-- Error handling
-- HTTPS enforcement
-- Cookie protection
-
-## Dependencies
-
-- Built-in ASP.NET Core authentication
-- System.Text.Json (built into .NET 8)
-- Bootstrap Icons for UI
-
-## Code Organization
-
-- Separated authentication and folder management concerns
-- Clean architecture principles
-- Proper dependency injection
-- Consistent error handling
+- XSS protection
+- CSRF protection
 
 ## Error Handling
 
-All API errors are properly handled and displayed in the UI:
-- Authentication errors
-- Permission errors (403 Forbidden)
-- Invalid input validation
-- Server errors
+- Comprehensive error logging
+- User-friendly error messages
+- API error translation
+- Permission denial handling
+- Network error recovery
 
-For further customization or support, please refer to the Egnyte API documentation or contact the project maintainer.
+## MVP Features
 
-## Minimum Viable Product (MVP)
+### 1. Authentication
+- [x] Resource Owner Password Flow
+- [x] Secure token management
+- [x] Session handling
 
-The core functionality of this application can be broken down into these essential features:
+### 2. File System
+- [x] Folder browsing
+- [x] File listing
+- [x] Path navigation
 
-### 1. Basic Authentication
-- Resource Owner Password Flow (username/password login)
-- Secure token management
-- Session handling
+### 3. Permissions
+- [x] View permissions
+- [x] Set group permissions
+- [x] Bulk updates
 
-### 2. Core File Operations
-- List folders and files
-- Navigate through folder hierarchy
-- Basic file information display
+## Future Enhancements
 
-### 3. Permission Management
-- View folder permissions
-- Set group permissions
-- Handle basic error cases
+1. File Operations
+   - Upload/Download
+   - Move/Copy
+   - Delete operations
 
-### MVP Implementation Steps
+2. Advanced Permissions
+   - User-level permissions
+   - Permission templates
+   - Batch operations
 
-1. **Setup Project**
-   ```sh
-   dotnet new webapp -n EgnyteApp
-   cd EgnyteApp
-   ```
+3. Monitoring
+   - Activity logging
+   - Audit trails
+   - Usage statistics
 
-2. **Core Services**
-   - EgnyteAuthService (authentication)
-   - EgnyteFolderService (file operations)
+## Contributing
 
-3. **Essential Pages**
-   - Login
-   - List Folder
-   - Get/Set Permissions
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-4. **Basic Security**
-   - HTTPS
-   - Token management
-   - Input validation
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please contact the project maintainers or raise an issue in the repository.
