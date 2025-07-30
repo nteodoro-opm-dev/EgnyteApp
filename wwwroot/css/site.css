@@ -266,6 +266,40 @@ body {
     padding-right: 0;
 }
 
+/* Page header styling */
+.page-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    margin: -2rem -2rem 1rem -2rem;
+}
+
+/* Bulk permissions layout */
+.bulk-permissions-container {
+    margin: -1rem;
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+.content-panel,
+.reference-panel {
+    padding: 1rem;
+    flex: 1;
+}
+
+.reference-panel .table-responsive {
+    overflow-y: visible;
+}
+
+.reference-panel .card-body {
+    overflow: visible;
+}
+
+.reference-panel table thead th {
+    background: var(--card-bg);
+    z-index: 1;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     body {

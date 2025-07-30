@@ -1,10 +1,214 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Welcome";
 }
 
-@* <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div> *@
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">
+            <i class="bi bi-house me-2"></i>
+            Welcome to OPM Egnyte App
+        </h1>
+    </div>
+</div>
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <!-- Welcome back section for authenticated users -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                <i class="bi bi-check-circle me-2"></i>
+                <div>
+                    <strong>Welcome back, @User.Identity.Name!</strong>
+                    You are successfully authenticated and ready to manage Egnyte permissions.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions for authenticated users -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-lightning me-2"></i>Quick Actions</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-lock display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">View Permissions</h5>
+                            <p class="card-text">Browse folders and view their current permission settings.</p>
+                            <a href="/GetFolderPermissions" class="btn btn-primary">
+                                <i class="bi bi-eye me-1"></i>
+                                Get Permissions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-pencil-square display-4 text-success mb-3"></i>
+                            <h5 class="card-title">Manage Permissions</h5>
+                            <p class="card-text">Set permissions for groups across multiple folders efficiently.</p>
+                            <a href="/BulkPermissions" class="btn btn-success">
+                                <i class="bi bi-gear me-1"></i>
+                                Set Permissions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-person-check display-4 text-info mb-3"></i>
+                            <h5 class="card-title">User Permissions</h5>
+                            <p class="card-text">Check effective permissions for specific users on folders.</p>
+                            <a href="/GetUserPermissions" class="btn btn-info">
+                                <i class="bi bi-search me-1"></i>
+                                Check User Access
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Welcome section for non-authenticated users -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <div>
+                    Please log in to access the Egnyte permission management features.
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- About section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-info-square me-2"></i>About This Application</h2>
+        <div class="card">
+            <div class="card-body">
+                <p class="lead">
+                    The OPM Egnyte App is a powerful web-based tool designed to streamline the management of 
+                    Egnyte file system permissions and folder access controls.
+                </p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-target me-2"></i>Purpose</h5>
+                        <p>
+                            This application enables system administrators, project managers, and IT support staff 
+                            to efficiently manage Egnyte folder permissions through an intuitive web interface, 
+                            with a focus on group-based access control and bulk operations.
+                        </p>
+
+                        <h5><i class="bi bi-people me-2"></i>Target Users</h5>
+                        <ul>
+                            <li>System Administrators</li>
+                            <li>Project Managers</li>
+                            <li>IT Support Staff</li>
+                            <li>Permission Administrators</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-star me-2"></i>Key Features</h5>
+                        <ul>
+                            <li><strong>Secure Authentication:</strong> OAuth 2.0 integration with Egnyte</li>
+                            <li><strong>Permission Management:</strong> View and modify folder permissions</li>
+                            <li><strong>Bulk Operations:</strong> Efficient mass permission updates</li>
+                            <li><strong>User Permissions:</strong> Check effective user access levels</li>
+                            <li><strong>Modern UI:</strong> Responsive design with dark/light theme support</li>
+                        </ul>
+
+                        <h5><i class="bi bi-shield-check me-2"></i>Security</h5>
+                        <ul>
+                            <li>HTTPS encryption</li>
+                            <li>Secure token management</li>
+                            <li>Session protection</li>
+                            <li>Input validation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How it works section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-gear me-2"></i>How It Works</h2>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-1-circle me-2"></i>Authentication</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Securely connect to your Egnyte account using OAuth 2.0 authentication. 
+                            Your credentials are never stored locally.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="bi bi-2-circle me-2"></i>Navigate & Browse</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            Browse your Egnyte folder structure with an intuitive interface, 
+                            complete with breadcrumb navigation and folder hierarchy.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-info">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="bi bi-3-circle me-2"></i>Manage Permissions</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            View current permissions, set group access levels, and perform 
+                            bulk updates across multiple folders efficiently.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <!-- Get started section for non-authenticated users -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3><i class="bi bi-rocket me-2"></i>Ready to Get Started?</h3>
+                    <p class="lead">
+                        Log in with your Egnyte credentials to begin managing folder permissions.
+                    </p>
+                    <a href="/Auth/ResourceOwnerLogin" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Login to Egnyte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

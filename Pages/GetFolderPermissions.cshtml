@@ -4,11 +4,16 @@
     ViewData["Title"] = "Get Folder Permissions";
 }
 
-<div class="container">
-    <h1>Get Folder Permissions</h1>
-
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
+<!-- Page Header -->
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Get Folder Permissions</h1>
+        <a href="/" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-house-door me-1"></i>Back to Home
+        </a>
+    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item">
                 <a href="@Url.Page("./GetFolderPermissions", new { folderPath = "/" })">Root</a>
             </li>
@@ -32,90 +37,107 @@
             }
         </ol>
     </nav>
+</div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Select Folder</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.CurrentFolderContent?.folders != null)
-                    {
-                        <div class="list-group">
-                            @foreach (var folder in Model.CurrentFolderContent.folders)
-                            {
-                                <a href="@Url.Page("./GetFolderPermissions", new { folderPath = folder.path })" 
-                                   class="list-group-item list-group-item-action">
-                                    <i class="bi bi-folder text-warning"></i>
-                                    @folder.name
-                                </a>
-                            }
-                        </div>
-                    }
-                </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Select Folder</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.CurrentFolderContent?.folders != null)
+                {
+                    <div class="list-group">
+                        @foreach (var folder in Model.CurrentFolderContent.folders)
+                        {
+                            <a href="@Url.Page("./GetFolderPermissions", new { folderPath = folder.path })" 
+                               class="list-group-item list-group-item-action">
+                                <i class="bi bi-folder text-warning me-2"></i>
+                                @folder.name
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No subfolders found in this location.
+                    </div>
+                }
             </div>
         </div>
+    </div>
 
-        <div class="col-md-4">
-            <div class="card @(Model.Permissions == null ? "d-none" : "")">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Folder Permissions</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.Error != null)
-                    {
-                        <div class="alert alert-danger">@Model.Error</div>
-                    }
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Folder Permissions</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Error != null)
+                {
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        @Model.Error
+                    </div>
+                }
 
-                    @if (Model.Permissions != null)
+                @if (Model.Permissions != null)
+                {
+                    <div class="mb-3">
+                        <h6>Selected Folder:</h6>
+                        <p class="text-muted">@Model.FolderPath</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Inheritance:</h6>
+                        <div class="d-flex align-items-center">
+                            <i class="bi @(Model.Permissions.InheritsPermissions ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger") me-2"></i>
+                            <span>Inherits Permissions from Parent</span>
+                        </div>
+                    </div>
+
+                    @if (Model.Permissions.UserPerms?.Count > 0)
                     {
                         <div class="mb-3">
-                            <h6>Selected Folder:</h6>
-                            <p class="text-muted">@Model.FolderPath</p>
+                            <h6>User Permissions:</h6>
+                            <ul class="list-group">
+                                @foreach (var user in Model.Permissions.UserPerms)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>@user.Key</span>
+                                        <span class="badge bg-primary">@user.Value</span>
+                                    </li>
+                                }
+                            </ul>
                         </div>
-
-                        <div class="mb-3">
-                            <h6>Inheritance:</h6>
-                            <div class="d-flex align-items-center">
-                                <i class="bi @(Model.Permissions.InheritsPermissions ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger") me-2"></i>
-                                <span>Inherits Permissions from Parent</span>
-                            </div>
-                        </div>
-
-                        @if (Model.Permissions.UserPerms?.Count > 0)
-                        {
-                            <div class="mb-3">
-                                <h6>User Permissions:</h6>
-                                <ul class="list-group">
-                                    @foreach (var user in Model.Permissions.UserPerms)
-                                    {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>@user.Key</span>
-                                            <span class="badge bg-primary">@user.Value</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
-
-                        @if (Model.Permissions.GroupPerms?.Count > 0)
-                        {
-                            <div class="mb-3">
-                                <h6>Group Permissions:</h6>
-                                <ul class="list-group">
-                                    @foreach (var group in Model.Permissions.GroupPerms)
-                                    {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>@group.Key</span>
-                                            <span class="badge bg-primary">@group.Value</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
                     }
-                </div>
+
+                    @if (Model.Permissions.GroupPerms?.Count > 0)
+                    {
+                        <div class="mb-3">
+                            <h6>Group Permissions:</h6>
+                            <ul class="list-group">
+                                @foreach (var group in Model.Permissions.GroupPerms)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>@group.Key</span>
+                                        <span class="badge bg-primary">@group.Value</span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-shield-lock display-4 text-secondary mb-3"></i>
+                        <p class="text-muted">Select a folder to view its permissions</p>
+                    </div>
+                }
             </div>
         </div>
     </div>

@@ -1,0 +1,93 @@
+@{
+    var foremanPerms = new List<(string Folder, string Permission)>
+    {
+        ("1 Master List", "No Access"),
+        ("2 Permits, Contract Documents, Letters/Permits", "View"),
+        ("2 Permits, Contract Documents, Letters/Contract", "No Access"),
+        ("2 Permits, Contract Documents, Letters/Letters", "No Access"),
+        ("3 OCIP", "No Access"),
+        ("4 Drawings, Specs", "View"),
+        ("5 Suppliers Quotes & P.Os", "Full"),
+        ("5 Suppliers Quotes & P.Os/Packing Slips", "View"),
+        ("6 Fixtures", "View"),
+        ("7 Equipment", "View"),
+        ("8 Project Schedules", "View"),
+        ("9 Progress", "No Access"),
+        ("10 Change Orders", "View"),
+        ("11 Reports", "View*"),
+        ("12 RFIs, ASIs", "View"),
+        ("13 Meeting Minutes", "Editor"),
+        ("14 Transmittals - Job Information Sheets", "No Access"),
+        ("15 Shop Drawings/Shop Drawings (Received from Vendor)", "No Access (WA only)"),
+        ("15 Shop Drawings/Shop Drawings (Reviewed)", "View"),
+        ("15 Shop Drawings/Shop Drawings (Submitted)", "No Access"),
+        ("16 O+M Manuals", "View"),
+        ("17 Controls", "Editor"),
+        ("18 QA-QC", "Full"),
+        ("19 Safety Manual", "View"),
+        ("20 Code Book", "View"),
+        ("21 Site Labor Projections", "Not used/No access"),
+        ("22 Budgets & Overall Projections", "Not used/No access"),
+        ("23 HVAC Detailing (NCa only)", "View"),
+        ("WIP", "Full")
+    };
+}
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Folders for Foreman - Reference Guide</h5>
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#permissionsGuide" aria-expanded="false" aria-controls="permissionsGuide">
+            Toggle Guide
+        </button>
+    </div>
+    <div class="collapse show" id="permissionsGuide">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Folder</th>
+                            <th style="width: 150px;">Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (folder, permission) in foremanPerms)
+                        {
+                            <tr>
+                                <td class="@(folder.Contains("/") ? "ps-4" : "fw-bold")">
+                                    @(folder.Contains("/") ? folder.Split('/').Last() : folder)
+                                </td>
+                                <td>@permission</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-body border-top">
+                <h6 class="card-subtitle mb-2">Important Notes</h6>
+                <ul class="mb-3">
+                    <li>Supervisor group – access to all jobs to their region</li>
+                    <li>Brandon Ralston - All projects Control Guy</li>
+                    <li>Keith Mears - BC Main Foreman all projects</li>
+                    <li>Keith Dunn - WA Main Foreman all Projects</li>
+                    <li>M Brock – WA all projects</li>
+                </ul>
+
+                <h6>Oregon</h6>
+                <ul class="mb-3">
+                    <li>Request for foremen folder access will always come from PM.</li>
+                    <li>Some PM will request to give full access on job root folder.</li>
+                    <li>Some PM will request to give elevated access (full) following regular permission structure.</li>
+                    <li><strong>Verify with PM first!!!</strong></li>
+                </ul>
+
+                <h6>Washington</h6>
+                <ul class="mb-0">
+                    <li>Foremen gets full access to 11-Reports folder</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
